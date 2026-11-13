@@ -1,11 +1,14 @@
 
 package com.narendra.applock
 
-import android.os.Bundle
+import android.content.Intent
 import android.graphics.Color
 import android.graphics.Typeface
+import android.os.Bundle
 import android.view.Gravity
-import android.widget.*
+import android.widget.LinearLayout
+import android.widget.TextView
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.setPadding
 
@@ -22,15 +25,17 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun showPinScreen() {
-
         setContentView(R.layout.activity_pin)
 
-        val pinInput = findViewById<EditText>(R.id.pinInput)
+        val pinInput = findViewById<android.widget.EditText>(
+            R.id.pinInput
+        )
         val pinError = findViewById<TextView>(R.id.pinError)
-        val verify = findViewById<Button>(R.id.verifyPin)
+        val verify = findViewById<android.widget.Button>(
+            R.id.verifyPin
+        )
 
         verify.setOnClickListener {
-
             val pin = pinInput.text.toString()
 
             if (PinManager.verifyPin(this, pin)) {
@@ -43,7 +48,6 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun showDashboard() {
-
         val root = LinearLayout(this).apply {
             orientation = LinearLayout.VERTICAL
             gravity = Gravity.CENTER
@@ -53,14 +57,14 @@ class MainActivity : AppCompatActivity() {
 
         val title = TextView(this).apply {
             text = "NARENDRA"
-            textSize = 30f
+            textSize = 32f
             setTextColor(Color.WHITE)
             typeface = Typeface.DEFAULT_BOLD
             gravity = Gravity.CENTER
         }
 
         val subtitle = TextView(this).apply {
-            text = "APPLOCK PREMIUM"
+            text = "APPLOCK PREMIUM 3D"
             textSize = 16f
             setTextColor(blue)
             gravity = Gravity.CENTER
@@ -69,30 +73,40 @@ class MainActivity : AppCompatActivity() {
         root.addView(title)
         root.addView(subtitle)
 
-        addFeature(root, "🔐  APP LOCK") {
+        addFeature(root, "APP LOCK") {
             Toast.makeText(
-                this, "App Lock module coming next",
+                this,
+                "App Lock module is coming next",
                 Toast.LENGTH_SHORT
             ).show()
         }
 
-        addFeature(root, "📷  PHOTO VAULT") {
+        addFeature(root, "PHOTO VAULT") {
             Toast.makeText(
-                this, "Photo Vault module coming next",
+                this,
+                "Photo Vault module is coming next",
                 Toast.LENGTH_SHORT
             ).show()
         }
 
-        addFeature(root, "🎬  VIDEO VAULT") {
+        addFeature(root, "VIDEO VAULT") {
             Toast.makeText(
-                this, "Video Vault module coming next",
+                this,
+                "Video Vault module is coming next",
                 Toast.LENGTH_SHORT
             ).show()
         }
 
-        addFeature(root, "⚙️  SECURITY SETTINGS") {
+        addFeature(root, "CHANGE MPIN") {
+            startActivity(
+                Intent(this, ChangePinActivity::class.java)
+            )
+        }
+
+        addFeature(root, "SECURITY SETTINGS") {
             Toast.makeText(
-                this, "Security settings coming next",
+                this,
+                "More security features coming next",
                 Toast.LENGTH_SHORT
             ).show()
         }
@@ -105,9 +119,8 @@ class MainActivity : AppCompatActivity() {
         label: String,
         action: () -> Unit
     ) {
-
         val button = TextView(this).apply {
-            text = label
+            text = "✦  $label"
             textSize = 17f
             typeface = Typeface.DEFAULT_BOLD
             setTextColor(Color.WHITE)
@@ -121,10 +134,10 @@ class MainActivity : AppCompatActivity() {
 
         val params = LinearLayout.LayoutParams(
             LinearLayout.LayoutParams.MATCH_PARENT,
-            65
+            62
         )
 
-        params.setMargins(0, 18, 0, 0)
+        params.setMargins(0, 14, 0, 0)
         root.addView(button, params)
     }
 }
