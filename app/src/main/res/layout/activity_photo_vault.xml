@@ -1,0 +1,73 @@
+
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="20dp"
+    android:background="#080C1C">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="🔐 PRIVATE PHOTO VAULT"
+        android:textColor="#00BEFF"
+        android:textSize="23sp"
+        android:textStyle="bold"
+        android:gravity="center"
+        android:padding="18dp"/>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Your private photos, protected securely"
+        android:textColor="#FFFFFF"
+        android:textSize="14sp"
+        android:gravity="center"
+        android:padding="10dp"/>
+
+    <Button
+        android:id="@+id/addPhotoButton"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:layout_marginTop="25dp"
+        android:text="＋ ADD PRIVATE PHOTO"
+        android:textColor="#FFFFFF"
+        android:textStyle="bold"
+        android:backgroundTint="#087DDB"/>
+
+    <TextView
+        android:id="@+id/photoVaultStatus"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Your private vault is ready"
+        android:textColor="#00BEFF"
+        android:textSize="14sp"
+        android:gravity="center"
+        android:padding="16dp"/>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="SAVED PRIVATE PHOTOS"
+        android:textColor="#FFFFFF"
+        android:textStyle="bold"
+        android:textSize="16sp"
+        android:padding="10dp"/>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:fillViewport="true">
+
+        <LinearLayout
+            android:id="@+id/photoList"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"/>
+
+    </ScrollView>
+
+</LinearLayout>
