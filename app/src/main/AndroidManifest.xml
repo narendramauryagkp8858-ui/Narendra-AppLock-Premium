@@ -13,6 +13,10 @@
         android:supportsRtl="true">
 
         <activity
+            android:name=".PhotoVaultActivity"
+            android:exported="false" />
+
+        <activity
             android:name=".ChangePinActivity"
             android:exported="false" />
 
@@ -28,5 +32,4 @@
         </activity>
 
     </application>
-
 </manifest>
