@@ -6,6 +6,7 @@ import android.graphics.Color
 import android.graphics.Typeface
 import android.os.Bundle
 import android.view.Gravity
+import android.view.ViewGroup
 import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
@@ -44,7 +45,7 @@ class MainActivity : AppCompatActivity() {
         val root = LinearLayout(this).apply {
             orientation = LinearLayout.VERTICAL
             gravity = Gravity.CENTER
-            setPadding(24)
+            setPadding(20)
             setBackgroundColor(dark)
         }
 
@@ -100,18 +101,19 @@ class MainActivity : AppCompatActivity() {
             typeface = Typeface.DEFAULT_BOLD
             setTextColor(Color.WHITE)
             gravity = Gravity.CENTER
-            setPadding(20)
+            setPadding(12, 0, 12, 0)
             setBackgroundColor(Color.rgb(20, 42, 75))
             isClickable = true
             isFocusable = true
+            minHeight = 64
             setOnClickListener { action() }
         }
 
         val params = LinearLayout.LayoutParams(
-            LinearLayout.LayoutParams.MATCH_PARENT,
-            62
+            ViewGroup.LayoutParams.MATCH_PARENT,
+            64
         )
-        params.setMargins(0, 14, 0, 0)
+        params.setMargins(0, 10, 0, 0)
         root.addView(button, params)
     }
 }
