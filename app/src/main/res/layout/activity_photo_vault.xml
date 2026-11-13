@@ -1,7 +1,5 @@
 
-<?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
@@ -11,62 +9,38 @@
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="🔐 PRIVATE PHOTO VAULT"
-        android:textColor="#00BEFF"
+        android:text="NARENDRA PHOTO VAULT"
         android:textSize="23sp"
         android:textStyle="bold"
+        android:textColor="#00BEFF"
         android:gravity="center"
-        android:padding="18dp"/>
-
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Your private photos, protected securely"
-        android:textColor="#FFFFFF"
-        android:textSize="14sp"
-        android:gravity="center"
-        android:padding="10dp"/>
+        android:padding="16dp" />
 
     <Button
         android:id="@+id/addPhotoButton"
         android:layout_width="match_parent"
-        android:layout_height="60dp"
-        android:layout_marginTop="25dp"
-        android:text="＋ ADD PRIVATE PHOTO"
-        android:textColor="#FFFFFF"
-        android:textStyle="bold"
-        android:backgroundTint="#087DDB"/>
+        android:layout_height="wrap_content"
+        android:text="ADD PRIVATE PHOTO" />
 
     <TextView
         android:id="@+id/photoVaultStatus"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Your private vault is ready"
-        android:textColor="#00BEFF"
-        android:textSize="14sp"
-        android:gravity="center"
-        android:padding="16dp"/>
-
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="SAVED PRIVATE PHOTOS"
+        android:text="Your private photos"
         android:textColor="#FFFFFF"
-        android:textStyle="bold"
-        android:textSize="16sp"
-        android:padding="10dp"/>
+        android:textSize="15sp"
+        android:padding="12dp" />
 
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1"
-        android:fillViewport="true">
+        android:layout_weight="1">
 
         <LinearLayout
             android:id="@+id/photoList"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"/>
+            android:orientation="vertical" />
 
     </ScrollView>
 
