@@ -1,0 +1,72 @@
+
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:gravity="center"
+    android:padding="28dp"
+    android:background="#080C1C">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="🔐"
+        android:textSize="65sp"
+        android:layout_marginBottom="20dp"/>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="NARENDRA APPLOCK"
+        android:textColor="#FFFFFF"
+        android:textSize="25sp"
+        android:textStyle="bold"
+        android:gravity="center"/>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="ENTER YOUR SECURITY MPIN"
+        android:textColor="#00BEFF"
+        android:textSize="14sp"
+        android:gravity="center"
+        android:layout_marginTop="15dp"/>
+
+    <EditText
+        android:id="@+id/pinInput"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:layout_marginTop="30dp"
+        android:background="#172644"
+        android:hint="Enter 4 Digit MPIN"
+        android:hintTextColor="#8B9AB5"
+        android:textColor="#FFFFFF"
+        android:textSize="22sp"
+        android:gravity="center"
+        android:inputType="numberPassword"
+        android:maxLength="4"/>
+
+    <TextView
+        android:id="@+id/pinError"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text=""
+        android:textColor="#FF5252"
+        android:textSize="14sp"
+        android:gravity="center"
+        android:layout_marginTop="12dp"/>
+
+    <Button
+        android:id="@+id/verifyPin"
+        android:layout_width="match_parent"
+        android:layout_height="58dp"
+        android:layout_marginTop="22dp"
+        android:text="UNLOCK"
+        android:textStyle="bold"
+        android:textSize="17sp"
+        android:textColor="#FFFFFF"
+        android:backgroundTint="#087DDB"/>
+
+</LinearLayout>
