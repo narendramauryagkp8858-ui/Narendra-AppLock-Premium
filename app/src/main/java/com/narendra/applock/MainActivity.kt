@@ -2,25 +2,44 @@
 package com.narendra.applock
 
 import android.os.Bundle
-import android.content.Intent
 import android.graphics.Color
 import android.graphics.Typeface
 import android.view.Gravity
-import android.widget.LinearLayout
-import android.widget.TextView
-import android.widget.Toast
+import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.setPadding
 
 class MainActivity : AppCompatActivity() {
 
-    private val backgroundColor = Color.rgb(8, 12, 28)
-    private val blueColor = Color.rgb(0, 190, 255)
+    private val dark = Color.rgb(8, 12, 28)
+    private val blue = Color.rgb(0, 190, 255)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        showDashboard()
+        PinManager.initialize(this)
+        showPinScreen()
+    }
+
+    private fun showPinScreen() {
+
+        setContentView(R.layout.activity_pin)
+
+        val pinInput = findViewById<EditText>(R.id.pinInput)
+        val pinError = findViewById<TextView>(R.id.pinError)
+        val verify = findViewById<Button>(R.id.verifyPin)
+
+        verify.setOnClickListener {
+
+            val pin = pinInput.text.toString()
+
+            if (PinManager.verifyPin(this, pin)) {
+                showDashboard()
+            } else {
+                pinError.text = "Incorrect MPIN! Try again."
+                pinInput.text.clear()
+            }
+        }
     }
 
     private fun showDashboard() {
@@ -29,7 +48,7 @@ class MainActivity : AppCompatActivity() {
             orientation = LinearLayout.VERTICAL
             gravity = Gravity.CENTER
             setPadding(24)
-            setBackgroundColor(backgroundColor)
+            setBackgroundColor(dark)
         }
 
         val title = TextView(this).apply {
@@ -43,7 +62,7 @@ class MainActivity : AppCompatActivity() {
         val subtitle = TextView(this).apply {
             text = "APPLOCK PREMIUM"
             textSize = 16f
-            setTextColor(blueColor)
+            setTextColor(blue)
             gravity = Gravity.CENTER
         }
 
@@ -52,32 +71,28 @@ class MainActivity : AppCompatActivity() {
 
         addFeature(root, "🔐  APP LOCK") {
             Toast.makeText(
-                this,
-                "App Lock setup will be added next",
+                this, "App Lock module coming next",
                 Toast.LENGTH_SHORT
             ).show()
         }
 
         addFeature(root, "📷  PHOTO VAULT") {
             Toast.makeText(
-                this,
-                "Photo Vault setup will be added next",
+                this, "Photo Vault module coming next",
                 Toast.LENGTH_SHORT
             ).show()
         }
 
         addFeature(root, "🎬  VIDEO VAULT") {
             Toast.makeText(
-                this,
-                "Video Vault setup will be added next",
+                this, "Video Vault module coming next",
                 Toast.LENGTH_SHORT
             ).show()
         }
 
         addFeature(root, "⚙️  SECURITY SETTINGS") {
             Toast.makeText(
-                this,
-                "Security settings will be added next",
+                this, "Security settings coming next",
                 Toast.LENGTH_SHORT
             ).show()
         }
@@ -110,7 +125,6 @@ class MainActivity : AppCompatActivity() {
         )
 
         params.setMargins(0, 18, 0, 0)
-
         root.addView(button, params)
     }
 }
