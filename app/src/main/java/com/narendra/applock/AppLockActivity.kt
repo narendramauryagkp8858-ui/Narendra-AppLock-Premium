@@ -2,7 +2,6 @@
 package com.narendra.applock
 
 import android.accessibilityservice.AccessibilityServiceInfo
-import android.content.ComponentName
 import android.content.Intent
 import android.graphics.Color
 import android.graphics.Typeface
@@ -13,6 +12,7 @@ import android.view.ViewGroup
 import android.view.accessibility.AccessibilityManager
 import android.widget.Button
 import android.widget.LinearLayout
+import android.widget.ScrollView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -23,7 +23,6 @@ class AppLockActivity : AppCompatActivity() {
     private val dark = Color.rgb(8, 12, 28)
     private val blue = Color.rgb(0, 190, 255)
 
-    private lateinit var root: LinearLayout
     private lateinit var serviceStatus: TextView
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -46,8 +45,9 @@ class AppLockActivity : AppCompatActivity() {
 
         return manager.getEnabledAccessibilityServiceList(
             AccessibilityServiceInfo.FEEDBACK_ALL_MASK
-        ).any {
-            val service = it.resolveInfo.serviceInfo
+        ).any { info ->
+            val service = info.resolveInfo.serviceInfo
+
             service.packageName == packageName &&
                 service.name == AppLockAccessibilityService::class.java.name
         }
@@ -65,7 +65,7 @@ class AppLockActivity : AppCompatActivity() {
 
     private fun showScreen() {
 
-        root = LinearLayout(this).apply {
+        val root = LinearLayout(this).apply {
             orientation = LinearLayout.VERTICAL
             setPadding(20)
             setBackgroundColor(dark)
@@ -77,6 +77,7 @@ class AppLockActivity : AppCompatActivity() {
             typeface = Typeface.DEFAULT_BOLD
             setTextColor(blue)
             gravity = Gravity.CENTER
+            setPadding(12)
         }
 
         serviceStatus = TextView(this).apply {
@@ -87,6 +88,7 @@ class AppLockActivity : AppCompatActivity() {
 
         val enableButton = Button(this).apply {
             text = "ENABLE ACCESSIBILITY SERVICE"
+
             setOnClickListener {
                 startActivity(
                     Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS)
@@ -116,7 +118,7 @@ class AppLockActivity : AppCompatActivity() {
         root.addView(instruction)
         root.addView(listTitle)
 
-        val scroll = android.widget.ScrollView(this)
+        val scroll = ScrollView(this)
 
         val appList = LinearLayout(this).apply {
             orientation = LinearLayout.VERTICAL
@@ -156,11 +158,9 @@ class AppLockActivity : AppCompatActivity() {
             it.loadLabel(packageManager).toString().lowercase()
         }
 
-        val lockedApps = AppLockManager.getLockedApps(this)
-
         for (app in apps) {
 
-            val packageName = app.activityInfo.packageName
+            val appPackage = app.activityInfo.packageName
             val appName = app.loadLabel(packageManager).toString()
 
             val row = LinearLayout(this).apply {
@@ -174,6 +174,7 @@ class AppLockActivity : AppCompatActivity() {
                 text = appName
                 textSize = 15f
                 setTextColor(Color.WHITE)
+
                 layoutParams = LinearLayout.LayoutParams(
                     0,
                     ViewGroup.LayoutParams.WRAP_CONTENT,
@@ -182,28 +183,35 @@ class AppLockActivity : AppCompatActivity() {
             }
 
             val lockButton = Button(this).apply {
-                text = if (AppLockManager.isAppLocked(
+
+                text = if (
+                    AppLockManager.isAppLocked(
                         this@AppLockActivity,
-                        packageName
+                        appPackage
                     )
-                ) "LOCKED" else "LOCK"
+                ) {
+                    "LOCKED"
+                } else {
+                    "LOCK"
+                }
 
                 setOnClickListener {
 
-                    if (AppLockManager.isAppLocked(
+                    if (
+                        AppLockManager.isAppLocked(
                             this@AppLockActivity,
-                            packageName
+                            appPackage
                         )
                     ) {
                         AppLockManager.unlockApp(
                             this@AppLockActivity,
-                            packageName
+                            appPackage
                         )
                         text = "LOCK"
                     } else {
                         AppLockManager.lockApp(
                             this@AppLockActivity,
-                            packageName
+                            appPackage
                         )
                         text = "LOCKED"
                     }
