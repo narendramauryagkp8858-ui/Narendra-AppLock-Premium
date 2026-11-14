@@ -1,17 +1,18 @@
 
 package com.narendra.applock
 
-import android.app.AppOpsManager
-import android.content.Context
+import android.accessibilityservice.AccessibilityServiceInfo
+import android.content.ComponentName
 import android.content.Intent
-import android.content.pm.ApplicationInfo
-import android.content.pm.PackageManager
+import android.graphics.Color
+import android.graphics.Typeface
 import android.os.Bundle
 import android.provider.Settings
 import android.view.Gravity
+import android.view.ViewGroup
+import android.view.accessibility.AccessibilityManager
 import android.widget.Button
 import android.widget.LinearLayout
-import android.widget.ScrollView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -19,9 +20,11 @@ import androidx.core.view.setPadding
 
 class AppLockActivity : AppCompatActivity() {
 
-    private val dark = 0xFF080C1C.toInt()
-    private val blue = 0xFF00BEFF.toInt()
-    private lateinit var appList: LinearLayout
+    private val dark = Color.rgb(8, 12, 28)
+    private val blue = Color.rgb(0, 190, 255)
+
+    private lateinit var root: LinearLayout
+    private lateinit var serviceStatus: TextView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -30,151 +33,200 @@ class AppLockActivity : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
-        if (::appList.isInitialized) loadApps()
+
+        if (::serviceStatus.isInitialized) {
+            updateServiceStatus()
+        }
     }
 
-    private fun hasUsageAccess(): Boolean {
-        val ops = getSystemService(Context.APP_OPS_SERVICE) as AppOpsManager
-        val mode = ops.checkOpNoThrow(
-            AppOpsManager.OPSTR_GET_USAGE_STATS,
-            android.os.Process.myUid(),
-            packageName
-        )
-        return mode == AppOpsManager.MODE_ALLOWED
+    private fun isAccessibilityEnabled(): Boolean {
+        val manager = getSystemService(
+            ACCESSIBILITY_SERVICE
+        ) as AccessibilityManager
+
+        return manager.getEnabledAccessibilityServiceList(
+            AccessibilityServiceInfo.FEEDBACK_ALL_MASK
+        ).any {
+            val service = it.resolveInfo.serviceInfo
+            service.packageName == packageName &&
+                service.name == AppLockAccessibilityService::class.java.name
+        }
+    }
+
+    private fun updateServiceStatus() {
+        if (isAccessibilityEnabled()) {
+            serviceStatus.text = "● APP LOCK SERVICE: ENABLED"
+            serviceStatus.setTextColor(Color.GREEN)
+        } else {
+            serviceStatus.text = "● APP LOCK SERVICE: DISABLED"
+            serviceStatus.setTextColor(Color.RED)
+        }
     }
 
     private fun showScreen() {
-        val root = LinearLayout(this).apply {
+
+        root = LinearLayout(this).apply {
             orientation = LinearLayout.VERTICAL
-            setPadding(16)
+            setPadding(20)
             setBackgroundColor(dark)
         }
 
         val title = TextView(this).apply {
             text = "NARENDRA APP LOCK"
             textSize = 25f
+            typeface = Typeface.DEFAULT_BOLD
             setTextColor(blue)
             gravity = Gravity.CENTER
-            setPadding(12)
         }
 
-        val permissionButton = Button(this).apply {
-            text = "ENABLE USAGE ACCESS"
+        serviceStatus = TextView(this).apply {
+            textSize = 15f
+            gravity = Gravity.CENTER
+            setPadding(16)
+        }
+
+        val enableButton = Button(this).apply {
+            text = "ENABLE ACCESSIBILITY SERVICE"
             setOnClickListener {
-                startActivity(Intent(Settings.ACTION_USAGE_ACCESS_SETTINGS))
+                startActivity(
+                    Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS)
+                )
             }
         }
 
-        val info = TextView(this).apply {
-            text = "Select apps you want to protect. Usage Access is needed for app monitoring."
+        val instruction = TextView(this).apply {
+            text = "Settings में Narendra AppLock Service खोलें और उसे ON करें।"
             textSize = 14f
-            setTextColor(0xFFFFFFFF.toInt())
-            setPadding(8)
+            setTextColor(Color.WHITE)
+            gravity = Gravity.CENTER
+            setPadding(10)
         }
 
-        appList = LinearLayout(this).apply {
-            orientation = LinearLayout.VERTICAL
-        }
-
-        val scroll = ScrollView(this).apply {
-            addView(appList)
+        val listTitle = TextView(this).apply {
+            text = "SELECT APPS TO LOCK"
+            textSize = 18f
+            typeface = Typeface.DEFAULT_BOLD
+            setTextColor(Color.WHITE)
+            setPadding(12)
         }
 
         root.addView(title)
-        root.addView(permissionButton)
-        root.addView(info)
-        root.addView(scroll, LinearLayout.LayoutParams(
-            LinearLayout.LayoutParams.MATCH_PARENT, 0, 1f
-        ))
+        root.addView(serviceStatus)
+        root.addView(enableButton)
+        root.addView(instruction)
+        root.addView(listTitle)
 
-        setContentView(root)
-        loadApps()
-    }
+        val scroll = android.widget.ScrollView(this)
 
-    private fun loadApps() {
-        appList.removeAllViews()
-
-        if (!hasUsageAccess()) {
-            val message = TextView(this).apply {
-                text = "Please enable Usage Access above, then return here."
-                setTextColor(0xFFFFCC66.toInt())
-                textSize = 16f
-                setPadding(12)
-            }
-            appList.addView(message)
+        val appList = LinearLayout(this).apply {
+            orientation = LinearLayout.VERTICAL
         }
 
-        val pm = packageManager
-        val launcherIntent = Intent(Intent.ACTION_MAIN).apply {
+        scroll.addView(appList)
+
+        root.addView(
+            scroll,
+            LinearLayout.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT,
+                0,
+                1f
+            )
+        )
+
+        setContentView(root)
+
+        updateServiceStatus()
+        loadInstalledApps(appList)
+    }
+
+    private fun loadInstalledApps(container: LinearLayout) {
+
+        val intent = Intent(Intent.ACTION_MAIN).apply {
             addCategory(Intent.CATEGORY_LAUNCHER)
         }
 
-        val apps = pm.queryIntentActivities(
-            launcherIntent,
-            PackageManager.MATCH_ALL
-        ).map { it.activityInfo.applicationInfo }
-            .distinctBy { it.packageName }
-            .filter { it.packageName != packageName }
-            .sortedBy {
-                pm.getApplicationLabel(it).toString().lowercase()
+        val apps = packageManager.queryIntentActivities(
+            intent,
+            0
+        ).filter {
+            it.activityInfo.packageName != packageName
+        }.distinctBy {
+            it.activityInfo.packageName
+        }.sortedBy {
+            it.loadLabel(packageManager).toString().lowercase()
+        }
+
+        val lockedApps = AppLockManager.getLockedApps(this)
+
+        for (app in apps) {
+
+            val packageName = app.activityInfo.packageName
+            val appName = app.loadLabel(packageManager).toString()
+
+            val row = LinearLayout(this).apply {
+                orientation = LinearLayout.HORIZONTAL
+                gravity = Gravity.CENTER_VERTICAL
+                setPadding(10)
+                setBackgroundColor(Color.rgb(20, 42, 75))
             }
 
-        if (apps.isEmpty()) {
-            val empty = TextView(this).apply {
-                text = "No launchable apps found."
-                setTextColor(0xFFFFFFFF.toInt())
-                setPadding(12)
+            val name = TextView(this).apply {
+                text = appName
+                textSize = 15f
+                setTextColor(Color.WHITE)
+                layoutParams = LinearLayout.LayoutParams(
+                    0,
+                    ViewGroup.LayoutParams.WRAP_CONTENT,
+                    1f
+                )
             }
-            appList.addView(empty)
-            return
-        }
 
-        apps.forEach { app ->
-            addAppRow(app, pm)
-        }
-    }
+            val lockButton = Button(this).apply {
+                text = if (AppLockManager.isAppLocked(
+                        this@AppLockActivity,
+                        packageName
+                    )
+                ) "LOCKED" else "LOCK"
 
-    private fun addAppRow(app: ApplicationInfo, pm: PackageManager) {
-        val row = LinearLayout(this).apply {
-            orientation = LinearLayout.HORIZONTAL
-            gravity = Gravity.CENTER_VERTICAL
-            setPadding(12)
-            setBackgroundColor(0xFF142A4B.toInt())
-        }
+                setOnClickListener {
 
-        val name = TextView(this).apply {
-            text = pm.getApplicationLabel(app).toString()
-            textSize = 16f
-            setTextColor(0xFFFFFFFF.toInt())
-            layoutParams = LinearLayout.LayoutParams(0,
-                LinearLayout.LayoutParams.WRAP_CONTENT, 1f)
-        }
+                    if (AppLockManager.isAppLocked(
+                            this@AppLockActivity,
+                            packageName
+                        )
+                    ) {
+                        AppLockManager.unlockApp(
+                            this@AppLockActivity,
+                            packageName
+                        )
+                        text = "LOCK"
+                    } else {
+                        AppLockManager.lockApp(
+                            this@AppLockActivity,
+                            packageName
+                        )
+                        text = "LOCKED"
+                    }
 
-        val toggle = Button(this).apply {
-            text = if (AppLockManager.isAppLocked(this@AppLockActivity, app.packageName))
-                "LOCKED" else "LOCK"
-
-            setOnClickListener {
-                if (AppLockManager.isAppLocked(this@AppLockActivity, app.packageName)) {
-                    AppLockManager.unlockApp(this@AppLockActivity, app.packageName)
-                    text = "LOCK"
-                    Toast.makeText(this@AppLockActivity, "App unlocked", Toast.LENGTH_SHORT).show()
-                } else {
-                    AppLockManager.lockApp(this@AppLockActivity, app.packageName)
-                    text = "LOCKED"
-                    Toast.makeText(this@AppLockActivity, "App added to lock list", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(
+                        this@AppLockActivity,
+                        "$appName updated",
+                        Toast.LENGTH_SHORT
+                    ).show()
                 }
             }
+
+            row.addView(name)
+            row.addView(lockButton)
+
+            val params = LinearLayout.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.WRAP_CONTENT
+            )
+
+            params.setMargins(0, 5, 0, 5)
+
+            container.addView(row, params)
         }
-
-        row.addView(name)
-        row.addView(toggle)
-
-        val params = LinearLayout.LayoutParams(
-            LinearLayout.LayoutParams.MATCH_PARENT,
-            LinearLayout.LayoutParams.WRAP_CONTENT
-        )
-        params.setMargins(0, 6, 0, 6)
-        appList.addView(row, params)
     }
 }
