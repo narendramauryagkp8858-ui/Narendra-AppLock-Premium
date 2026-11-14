@@ -1,0 +1,5 @@
+
+<resources>
+    <string name="app_name">Narendra AppLock</string>
+    <string name="app_lock_service_description">Narendra AppLock uses accessibility events to detect when a protected app is opened and show its MPIN lock screen.</string>
+</resources>
