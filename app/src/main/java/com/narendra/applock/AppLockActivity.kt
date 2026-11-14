@@ -46,6 +46,7 @@ class AppLockActivity : AppCompatActivity() {
         return manager.getEnabledAccessibilityServiceList(
             AccessibilityServiceInfo.FEEDBACK_ALL_MASK
         ).any { info ->
+
             val service = info.resolveInfo.serviceInfo
 
             service.packageName == packageName &&
@@ -189,11 +190,7 @@ class AppLockActivity : AppCompatActivity() {
                         this@AppLockActivity,
                         appPackage
                     )
-                ) {
-                    "LOCKED"
-                } else {
-                    "LOCK"
-                }
+                ) "LOCKED" else "LOCK"
 
                 setOnClickListener {
 
