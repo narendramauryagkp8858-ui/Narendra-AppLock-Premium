@@ -9,7 +9,6 @@ import android.view.Gravity
 import android.view.ViewGroup
 import android.widget.LinearLayout
 import android.widget.TextView
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.setPadding
 
@@ -27,12 +26,21 @@ class MainActivity : AppCompatActivity() {
     private fun showPinScreen() {
         setContentView(R.layout.activity_pin)
 
-        val pinInput = findViewById<android.widget.EditText>(R.id.pinInput)
-        val pinError = findViewById<TextView>(R.id.pinError)
-        val verify = findViewById<android.widget.Button>(R.id.verifyPin)
+        val pinInput =
+            findViewById<android.widget.EditText>(R.id.pinInput)
+
+        val pinError =
+            findViewById<TextView>(R.id.pinError)
+
+        val verify =
+            findViewById<android.widget.Button>(R.id.verifyPin)
 
         verify.setOnClickListener {
-            if (PinManager.verifyPin(this, pinInput.text.toString())) {
+            if (PinManager.verifyPin(
+                    this,
+                    pinInput.text.toString()
+                )
+            ) {
                 showDashboard()
             } else {
                 pinError.text = "Incorrect MPIN! Try again."
@@ -68,23 +76,37 @@ class MainActivity : AppCompatActivity() {
         root.addView(subtitle)
 
         addFeature(root, "APP LOCK") {
-            Toast.makeText(this, "App Lock module is not ready yet", Toast.LENGTH_SHORT).show()
+            startActivity(
+                Intent(this, AppLockActivity::class.java)
+            )
         }
 
         addFeature(root, "PHOTO VAULT") {
-            startActivity(Intent(this, PhotoVaultActivity::class.java))
+            startActivity(
+                Intent(this, PhotoVaultActivity::class.java)
+            )
         }
 
         addFeature(root, "VIDEO VAULT") {
-            Toast.makeText(this, "Video Vault module is coming next", Toast.LENGTH_SHORT).show()
+            android.widget.Toast.makeText(
+                this,
+                "Video Vault is coming next",
+                android.widget.Toast.LENGTH_SHORT
+            ).show()
         }
 
         addFeature(root, "CHANGE MPIN") {
-            startActivity(Intent(this, ChangePinActivity::class.java))
+            startActivity(
+                Intent(this, ChangePinActivity::class.java)
+            )
         }
 
         addFeature(root, "SECURITY SETTINGS") {
-            Toast.makeText(this, "Security settings are coming next", Toast.LENGTH_SHORT).show()
+            android.widget.Toast.makeText(
+                this,
+                "Security settings are coming next",
+                android.widget.Toast.LENGTH_SHORT
+            ).show()
         }
 
         setContentView(root)
@@ -113,6 +135,7 @@ class MainActivity : AppCompatActivity() {
             ViewGroup.LayoutParams.MATCH_PARENT,
             64
         )
+
         params.setMargins(0, 10, 0, 0)
         root.addView(button, params)
     }
