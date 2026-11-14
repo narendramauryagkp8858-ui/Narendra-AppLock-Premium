@@ -4,6 +4,8 @@ package com.narendra.applock
 import android.graphics.Color
 import android.graphics.Typeface
 import android.os.Bundle
+import android.text.InputFilter
+import android.text.InputType
 import android.view.Gravity
 import android.widget.Button
 import android.widget.EditText
@@ -37,6 +39,7 @@ class LockScreenActivity : AppCompatActivity() {
     }
 
     private fun showLockScreen() {
+
         val root = LinearLayout(this).apply {
             orientation = LinearLayout.VERTICAL
             gravity = Gravity.CENTER
@@ -62,9 +65,9 @@ class LockScreenActivity : AppCompatActivity() {
 
         val pinInput = EditText(this).apply {
             hint = "Enter 4-digit MPIN"
-            inputType = android.text.InputType.TYPE_CLASS_NUMBER or
-                android.text.InputType.TYPE_NUMBER_VARIATION_PASSWORD
-            maxLength = 4
+            inputType = InputType.TYPE_CLASS_NUMBER or
+                InputType.TYPE_NUMBER_VARIATION_PASSWORD
+            filters = arrayOf(InputFilter.LengthFilter(4))
             gravity = Gravity.CENTER
             textSize = 22f
             setTextColor(Color.WHITE)
@@ -82,6 +85,7 @@ class LockScreenActivity : AppCompatActivity() {
         }
 
         unlockButton.setOnClickListener {
+
             val enteredPin = pinInput.text.toString()
 
             if (PinManager.verifyPin(this, enteredPin)) {
