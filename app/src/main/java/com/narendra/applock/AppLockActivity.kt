@@ -32,7 +32,6 @@ class AppLockActivity : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
-
         if (::serviceStatus.isInitialized) {
             updateServiceStatus()
         }
@@ -46,9 +45,7 @@ class AppLockActivity : AppCompatActivity() {
         return manager.getEnabledAccessibilityServiceList(
             AccessibilityServiceInfo.FEEDBACK_ALL_MASK
         ).any { info ->
-
             val service = info.resolveInfo.serviceInfo
-
             service.packageName == packageName &&
                 service.name == AppLockAccessibilityService::class.java.name
         }
@@ -65,7 +62,6 @@ class AppLockActivity : AppCompatActivity() {
     }
 
     private fun showScreen() {
-
         val root = LinearLayout(this).apply {
             orientation = LinearLayout.VERTICAL
             setPadding(20)
@@ -89,7 +85,6 @@ class AppLockActivity : AppCompatActivity() {
 
         val enableButton = Button(this).apply {
             text = "ENABLE ACCESSIBILITY SERVICE"
-
             setOnClickListener {
                 startActivity(
                     Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS)
@@ -120,7 +115,6 @@ class AppLockActivity : AppCompatActivity() {
         root.addView(listTitle)
 
         val scroll = ScrollView(this)
-
         val appList = LinearLayout(this).apply {
             orientation = LinearLayout.VERTICAL
         }
@@ -137,13 +131,11 @@ class AppLockActivity : AppCompatActivity() {
         )
 
         setContentView(root)
-
         updateServiceStatus()
         loadInstalledApps(appList)
     }
 
     private fun loadInstalledApps(container: LinearLayout) {
-
         val intent = Intent(Intent.ACTION_MAIN).apply {
             addCategory(Intent.CATEGORY_LAUNCHER)
         }
@@ -160,7 +152,6 @@ class AppLockActivity : AppCompatActivity() {
         }
 
         for (app in apps) {
-
             val appPackage = app.activityInfo.packageName
             val appName = app.loadLabel(packageManager).toString()
 
@@ -175,7 +166,6 @@ class AppLockActivity : AppCompatActivity() {
                 text = appName
                 textSize = 15f
                 setTextColor(Color.WHITE)
-
                 layoutParams = LinearLayout.LayoutParams(
                     0,
                     ViewGroup.LayoutParams.WRAP_CONTENT,
@@ -184,7 +174,6 @@ class AppLockActivity : AppCompatActivity() {
             }
 
             val lockButton = Button(this).apply {
-
                 text = if (
                     AppLockManager.isAppLocked(
                         this@AppLockActivity,
@@ -193,7 +182,6 @@ class AppLockActivity : AppCompatActivity() {
                 ) "LOCKED" else "LOCK"
 
                 setOnClickListener {
-
                     if (
                         AppLockManager.isAppLocked(
                             this@AppLockActivity,
@@ -228,7 +216,6 @@ class AppLockActivity : AppCompatActivity() {
                 ViewGroup.LayoutParams.MATCH_PARENT,
                 ViewGroup.LayoutParams.WRAP_CONTENT
             )
-
             params.setMargins(0, 5, 0, 5)
 
             container.addView(row, params)
